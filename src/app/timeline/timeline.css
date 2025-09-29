@@ -1,0 +1,25 @@
+:host{
+    display:flex;
+    flex-direction: row;
+}
+
+.semesters{
+    display: flex;
+    flex-direction: column;
+    flex: 1 0;
+    width: auto;
+    overflow-x: hidden;
+}
+
+.semesters .semester-header{
+    color: white;
+    height: 50px;
+    background-color: #5c5c5c;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 5px;
+    font-weight: bold;
+}

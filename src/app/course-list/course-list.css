@@ -1,0 +1,9 @@
+
+.course-list{
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-size);
+    overflow-y: auto;
+    flex: 1;
+    min-height: 0;
+}

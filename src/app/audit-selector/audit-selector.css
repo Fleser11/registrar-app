@@ -1,0 +1,19 @@
+:host{
+    /* display: flex; */
+    flex-direction: column;
+    display:flex;
+    /* flex:1; */
+
+}
+
+p-listbox{
+    flex:1;
+    background-color: rgb(43, 43, 43);
+    /* color: rgb(172, 58, 58); */
+}
+
+*{
+    /* --p-listbox-color: white; */
+    --p-listbox-option-color: white;
+    --p-listbox-border-color: gold;
+}

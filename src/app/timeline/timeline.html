@@ -1,0 +1,15 @@
+
+<div *ngFor="let i of range(8)"
+class="semesters"
+>
+    <div class="semester-header">
+        <h2>Semester {{i + 1}}</h2>
+    </div>
+    
+    <div *ngFor="let j of range(6)">
+        <app-timeline-slot 
+            (setCourse)="setCourse($event, i, j)"
+            [course]="currentCourse(i, j)">
+        </app-timeline-slot>
+    </div>
+</div>

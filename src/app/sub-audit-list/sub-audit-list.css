@@ -1,0 +1,82 @@
+:host{
+    display: flex;
+    flex-direction: column;
+    border: 1px solid black;
+    padding: 10px;
+    margin: 0;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    background-color: var(--section-primary);
+    box-sizing: border-box;
+    height: 100%;
+    /* width: 300px; */
+    min-width: 250px;
+    max-width: 300px;
+}
+
+
+div{
+    padding:0;
+    margin:0;
+}
+
+h1{
+    /* margin: 0; */
+    font-size: 1.2em;
+    /* white-space: nowrap; */
+    /* overflow: hidden; */
+    /* text-overflow: ellipsis; */
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+h2{
+    background-color: red;
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 0.9em;
+    height: 1.5em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.headers{
+    justify-content: space-between;
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    align-items: center;
+    margin-bottom: 10px;
+    flex-shrink: 0;
+}
+
+p{
+    display: flex;
+    /* flex-direction: column; */
+    /* gap: 8px; */
+    /* box-sizing: border-box; */
+    overflow-y: auto;
+    /* overflow-x: hidden; */
+    /* flex: 1; */
+    /* padding-right: 5px; */
+}
+
+li{
+    margin: 5px;
+}
+
+.course-item{
+    padding: 8px;
+    background-color: rgb(175, 175, 175);
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    cursor: grab;
+    transition: all 0.2s ease;
+    user-select: none;
+    word-wrap: break-word;
+    flex-shrink: 0;
+}

@@ -1,1 +1,50 @@
 /* You can add global styles to this file, and also import other style files */
+*{
+    /* --p-listbox-option-selected-background	: #404040;
+    --p-listbox-option-focus-background	: #404040;
+    --p-listbox-option-hover-background	: #a2a2a2;
+    --p-listbox-option-selected-color: white; */
+    --border-color: rgb(100,100,100,0);
+    --border-radius: 15px;
+    --background-primary: #2b2b2b;
+    --background-secondary: #ff8531;
+    --section-primary: #575757;
+    --section-secondary: #2b2b2b;
+    --text-primary: white;
+    --text-dark-primary: black;
+    --text-secondary: #d2d2d2;
+    --button-color: gold;
+    --button-hover-color: darkgoldenrod;
+    --gap-size: 15px;
+
+}
+
+body, html{
+    overflow:hidden;
+    background-color: var(--background-primary);
+    color: var(--text-primary);
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+}
+
+
+
+h1{
+    text-decoration: none;
+}
+
+
+::-webkit-scrollbar{
+    background-color: black;
+    width:0px;
+    height: 0px;
+    border-radius: 4px;
+
+}
+
+::-webkit-scrollbar-thumb{
+    /* background-color: gold; */
+    /* width: 2px; */
+    border-radius: 4px;
+    /* border-radius: 10px; */
+}

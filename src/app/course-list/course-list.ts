@@ -1,26 +1,51 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ViewChildren } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Course } from '../../generated/api';
 import { DragManager } from '../services/drag-manager';
 import { CourseListItem } from '../course-list-item/course-list-item';
+import { SearchBar } from '../search-bar/search-bar';
 
 @Component({
   selector: 'app-course-list',
   imports: [
     CommonModule,
-    CourseListItem
+    CourseListItem,
+    SearchBar
   ],
   templateUrl: './course-list.html',
   styleUrl: './course-list.css'
 })
 export class CourseList {
   @Input() courses: string[] = [];
+  @ViewChildren(CourseListItem) courseItems !: any;
+
+  searchTerm: string = '';
 
 
-    onDragStart(event: any, data: any): void{
-      var idx = this.courses.indexOf(data)
-      this.courses.splice(idx, 1);
-      DragManager.setCurrentItem(data);
-    }
+  resetVisibility(): void {
+    this.courseItems.forEach((item: CourseListItem) => {
+      item.hidden = false;
+    });
+  }
+
+  setVisible(course: string, visible: boolean){
+    // console.log("set " + course + " to " + visible)
+    this.courseItems.forEach((item: CourseListItem) => {
+      if (item.course == course){
+        item.hidden = !visible
+      }
+    });
+  }
+
+  onSearchChange(searchTerm: string): void {
+    this.searchTerm = searchTerm;
+  }
+
+
+  matchesSearch(course: string): boolean{
+    return course.includes(this.searchTerm);
+
+  }
+
 }
 

@@ -1,0 +1,16 @@
+
+div{
+    display:flex;
+    flex-direction: row;
+    background-color: #353535;
+    border-radius: var(--border-radius);
+    padding: 5px 10px;
+    gap: 10px;
+}
+
+input{
+    background-color: transparent;
+    color: white;
+    border: none;
+    outline: none;
+}

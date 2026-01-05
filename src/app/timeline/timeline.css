@@ -1,25 +1,40 @@
 :host{
     display:flex;
-    flex-direction: row;
+    flex-direction:row;
+    flex-grow:1;
+    gap: var(--gap-size);
+}
+
+*{
+    gap: var(--gap-size);
+}
+
+.course {
+    display:flex;
+    flex-grow:1;
+    flex-direction:column;
 }
 
 .semesters{
     display: flex;
     flex-direction: column;
-    flex: 1 0;
+    flex-grow:1;
     width: auto;
-    overflow-x: hidden;
+    overflow-x:visible;
+    width: 12.5%;
 }
+
+
 
 .semesters .semester-header{
     color: white;
     height: 50px;
-    background-color: #5c5c5c;
+    background-color: #353535;
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 5px;
+    /* margin: 5px; */
     font-weight: bold;
 }

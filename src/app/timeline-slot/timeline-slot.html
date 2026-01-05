@@ -1,8 +1,16 @@
 
-<div class = "course" 
-    draggable="true"
-    (dragover)="onDragOver($event)"
-    (drop)="onDrop($event)"
-    (dragstart)="onDragStart($event, course)">
-    {{course}}
+<div class="course" #courseDiv [class.disabled]="state==STATE.DISABLED" [draggable]="hasValue()"
+    (dragover)="onDragOver($event)" (drop)="onDrop($event)" (dragstart)="onDragStart($event, course)"
+    (dragend)="onDragEnd($event)">
+    {{coursef(course)}}
+
+</div>
+<div *ngIf="state==STATE.ENABLED" class="icon-circle" (click)="disable()">
+    &#10006;
+</div>
+<div *ngIf="state==STATE.DISABLED" class="icon-circle plus" (click)="enable()">
+    +
+</div>
+<div *ngIf="state==STATE.FILLED" class="icon-circle" (click)="clear()">
+    &#8617;
 </div>

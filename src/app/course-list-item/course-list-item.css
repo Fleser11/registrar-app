@@ -1,12 +1,25 @@
 
-:host{
-    padding: 8px;
-    background-color: rgb(175, 175, 175);
+:host(.hidden) {
+    display: none;
+    
+
+}
+
+:host(.no-match) {
+    display:none;
+}
+
+div {
+    /* padding: 8px; */
+    height: calc(1/7 * 50vh - var(--gap-size) * 1);
+    background-color: #5f5f5f;
     border: 1px solid var(--border-color);
-    border-radius: 5px;
+    border-radius: var(--border-radius);
     cursor: grab;
     transition: all 0.2s ease;
     user-select: none;
     word-wrap: break-word;
     flex-shrink: 0;
+    text-align: center;
+    align-content: center;
 }

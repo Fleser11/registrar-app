@@ -1,7 +1,12 @@
 
-<h1>Primary Audit</h1>
-<p-listbox [options]="audits" (onChange)="onAuditChange($event)" class="w-full md:w-56">
-</p-listbox>
-<h1>General Education Audit</h1>
-<p-listbox [options]="genEds" (onChange)="onSubAuditChange($event)" class="w-full md:w-56">
-</p-listbox>
+<div class="audit-section">
+  <h1>Primary Audit</h1>
+  <p-listbox [options]="audits" (onChange)="onAuditChange($event)" class="audit-listbox">
+  </p-listbox>
+</div>
+
+<div class="audit-section">
+  <h1>General Education Audit</h1>
+  <p-listbox [options]="genEds" (onChange)="onSubAuditChange($event)" class="audit-listbox">
+  </p-listbox>
+</div>

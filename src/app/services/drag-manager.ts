@@ -5,13 +5,21 @@ import { Observable } from "rxjs";
 export class DragManager {
 
 
-    currentItem: any;
     static currentItem: Draggable;
+    static success: boolean = false;
 
+
+    static setSuccess(value: boolean): void {
+        this.success = value;
+    }
+
+    static isSuccessful(): boolean {
+        return this.success;
+    }
 
     static setCurrentItem(item: any): void {
         this.currentItem = item;
-        console.log("set current item: " + this.currentItem)
+        //console.log("set current item: " + this.currentItem)
     }
 
     static getCurrentItem(): any {
@@ -30,7 +38,10 @@ export abstract class Draggable{
     onDragStart(event: any, data: any): void{
         this.data = data;
         DragManager.setCurrentItem(this);
+        DragManager.setSuccess(false);
+        //console.log("drag started: success status: " + DragManager.isSuccessful());
     }
+    abstract onDragEnd(event: any): void;
     abstract onDrop(event: any): any;
     onDragOver(event: any): void{
         if(this.locked){}

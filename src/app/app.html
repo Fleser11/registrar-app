@@ -1,52 +1,69 @@
-<p-dialog [modal]="true" [(visible)]="auditSelectorIsVisible" [style]="{width: '50vw', height: '50vh'}"
+<p-dialog [modal]="true" [(visible)]="auditSelectorIsVisible" [style]="{width: '60vw', height: '60vh'}"
   [closable]="false">
   <div class="dialog">
-    <app-audit-selector [audits]="audits" [genEds]="genEds" [selectAudit]="setAudit.bind(this)"
-      [selectGenEd]="setGenEd.bind(this)">
-    </app-audit-selector>
-    <br>
+    <div class="dialog-header">
+      <h2>Select Audit Programs</h2>
+    </div>
+    <div class="dialog-content">
+      <app-audit-selector 
+        [audits]="audits" 
+        [genEds]="genEds" 
+        [selectAudit]="setAudit.bind(this)"
+        [selectGenEd]="setGenEd.bind(this)">
+      </app-audit-selector>
+    </div>
     <button class="done-button" (click)="closeAuditSelector()">Done</button>
   </div>
 </p-dialog>
 
-<div *ngIf="loading" class="loading">
+<div class="app">
+
+  <div *ngIf="loading" class="loading">
     <!-- <h1> hello</h1> -->
-    <p-progressbar  styleClass="custom-bar" mode="indeterminate" ></p-progressbar>
+    <p-progressbar styleClass="custom-bar" mode="indeterminate"></p-progressbar>
     <!-- <h1>Loading...</h1> -->
-</div>
-<div *ngIf="failed" class="Error">
-  Non-Satisfiable Scenario
-</div>
-
-<div class="display">
-  
-  <div class="left-bar">
-    <button class="hamburger-button" (click)="auditSelectorIsVisible = true">
-      <svg style="width: 30px; height: 24px;">
-        <rect y="4" width="30" height="4"></rect>
-        <rect y="12" width="30" height="4"></rect>
-        <rect y="20" width="30" height="4"></rect>
-      </svg>
-    </button>
-    <app-course-list [courses]="courseList"></app-course-list>
   </div>
-  <div class="right">
-    <div class="timeline">
-      <app-timeline #timeline></app-timeline>
+  <div *ngIf="failed" class="error">
+    <p>Non-Satisfiable Scenario</p>
+  </div>
+
+
+  <div class="display">
+
+    <div class="left-bar">
+      <button class="hamburger-button" (click)="auditSelectorIsVisible = true">
+        <svg style="width: 30px; height: 24px; background-color:white">
+          <rect y="4" width="30" height="4"></rect>
+          <rect y="12" width="30" height="4"></rect>
+          <rect y="20" width="30" height="4"></rect>
+        </svg>
+      </button>
+      <app-course-list #courseList [courses]="courses"></app-course-list>
     </div>
-    <app-run-button [callback]="runCourseVal.bind(this)"></app-run-button>
+    <div class="right">
+      <div class="timeline">
+        <app-timeline 
+          (dropCourse) = "dropCourse($event)"
+          #timeline>
+        </app-timeline>
+      </div>
+      <div class="control-buttons">
+        <app-clear-button [callback]="clearCourseVal.bind(this)"></app-clear-button>
+        <app-run-button [callback]="runCourseVal.bind(this)"></app-run-button>
+      </div>
 
-    <div class="subaudits">
-      <ng-container *ngIf="audit && genEdAudit">
+      <div class="subaudits">
+        <ng-container *ngIf="audit && genEdAudit">
 
-        <ng-container *ngFor="let subAudit of audit.subAudit">
-          <app-sub-audit-list [subAudit]="subAudit"></app-sub-audit-list>
+          <ng-container *ngFor="let subAudit of audit.subAudit">
+            <app-sub-audit-list [subAudit]="subAudit"></app-sub-audit-list>
+          </ng-container>
+          <ng-container *ngFor="let subAudit of genEdAudit.subAudit">
+            <app-sub-audit-list [subAudit]="subAudit"></app-sub-audit-list>
+          </ng-container>
+
         </ng-container>
-        <ng-container *ngFor="let subAudit of genEdAudit.subAudit">
-          <app-sub-audit-list [subAudit]="subAudit"></app-sub-audit-list>
-        </ng-container>
-
-      </ng-container>
+      </div>
     </div>
   </div>
 </div>

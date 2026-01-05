@@ -6,15 +6,15 @@
     --p-listbox-option-selected-color: white; */
     --border-color: rgb(100,100,100,0);
     --border-radius: 15px;
-    --background-primary: #2b2b2b;
+    --background-primary: #1b1b1b;
     --background-secondary: #ff8531;
-    --section-primary: #575757;
-    --section-secondary: #2b2b2b;
+    --section-primary: #2b2b2b;
+    --section-secondary: #505050;
     --text-primary: white;
     --text-dark-primary: black;
     --text-secondary: #d2d2d2;
-    --button-color: gold;
-    --button-hover-color: darkgoldenrod;
+    --button-color: oklch(82.032% 0.00009 271.152);
+    --button-hover-color: rgb(139, 139, 139);
     --gap-size: 15px;
 
 }

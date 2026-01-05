@@ -1,7 +1,8 @@
 <div 
     class="course" 
     draggable="true" 
-    (dragstart)="onDragStart($event, course)" 
+    (dragstart)="onDragStart($event, course)"
+    (dragend)="onDragEnd($event)"
     class="course-item">
-    {{course}}
+    {{coursef(course)}}
 </div>

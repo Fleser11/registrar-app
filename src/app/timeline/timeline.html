@@ -6,9 +6,11 @@ class="semesters"
         <h2>Semester {{i + 1}}</h2>
     </div>
     
-    <div *ngFor="let j of range(6)">
-        <app-timeline-slot 
+    <div *ngFor="let j of range(6)" class="course">
+        <app-timeline-slot #timelineSlot
+            (resetCourse)="resetCourse($event)"
             (setCourse)="setCourse($event, i, j)"
+            (setState)="setState($event, i, j)"
             [course]="currentCourse(i, j)">
         </app-timeline-slot>
     </div>

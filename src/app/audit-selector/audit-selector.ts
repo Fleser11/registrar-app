@@ -18,7 +18,7 @@ export class AuditSelector {
 
 
   onAuditChange(event: any): void {
-    console.log(event.value)
+    //console.log(event.value)
     this.selectAudit(event.value);
   }
   onSubAuditChange(event: any): void {

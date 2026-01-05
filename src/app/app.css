@@ -1,17 +1,24 @@
-*{
-    --p-progressbar-value-background: yellow;
-    --p-progressbar-background: #404040;
+* {
+    --p-progressbar-value-background: var(--button-color);
+    --p-progressbar-background: var(--section-secondary);
+    --p-progressbar-height: 5px;
+    --p-dialog-background: var(--section-primary);
+    --p-dialog-border-color: var(--button-color);
+    --p-dialog-border-radius: var(--border-radius);
 
 }
 
-:host{
-    display:flex;
+:host {
+    display: flex;
     flex-direction: column;
-    height: 100vh;
-    gap: var(--gap-size);
+    /* height: 98vh; */
+    /* gap: var(--gap-size); */
+    /* width: 80vw; */
+    /* align-items: center; */
+    /* justify-self: center; */
 }
 
-.loading{
+.loading {
     flex-direction: column;
 
 }
@@ -19,51 +26,73 @@
 .left-bar {
     display: flex;
     flex-direction: column;
-    flex: 0 0 20vw;
+    flex: 0 0 10vw;
     border-right: 1px solid var(--border-color);
     box-sizing: border-box;
     height: 100vh;
     overflow-y: auto;
     overflow-x: hidden;
-    
+
 }
 
-.left-bar app-course-list{
+.left-bar app-course-list {
     overflow-y: scroll;
 }
+
 .right {
     display: flex;
     flex-direction: column;
-    flex: 1;
+    /* flex: 1; */
+    flex-grow: 1;
     box-sizing: border-box;
     height: 100vh;
-    overflow: hidden;
+    overflow: auto;
     gap: 10px;
+    padding-right: 10px;
 }
 
-.display{
+
+
+.app{
+    width: 98vw;
+    height: 100vh;
+    align-content: center;
+    justify-content: center;
+    margin:  auto;
+    gap: var(--gap-size);
+}
+
+.display {
     display: flex;
     flex-direction: row;
     gap: var(--gap-size);
-    height: 100vh;
-    width: 100vw;
 }
 
-.done-button{
+
+.done-button {
     background-color: var(--button-color);
     width: 100%;
-    height: 30px;
-    font-size: 20px;
-    flex: 1;
-    border-radius: var(--border-radius);
+    height: 45px;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-dark-primary);
+    border: none;
+    /* border-radius: 0 0 0 0; */
+    cursor: pointer;
+    transition: all 0.3s ease;
+    /* box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3); */
+    margin-top: auto;
 }
 
-.done-button:hover{
-    cursor:pointer;
+.done-button:hover {
     background-color: var(--button-hover-color);
+    /* transform: translateY(-2px); */
+    /* box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4); */
 }
 
 .hamburger-button {
+    background-color: #353535;
+
     width: 100%;
     /* height: 80px; */
     /* flex: 1 0; */
@@ -122,17 +151,24 @@
     width: 80%;
 }
  */
-.timeline{
+.timeline {
     /* flex: 1; */
-    
+    flex-grow: 1;
+    /* overflow-x: hidden; */
+    height:50vh;
+    width: 100%;
+
 }
 
-.subaudits{
-    display:flex;
+.subaudits {
+    display: flex;
     gap: 10px;
     overflow-x: scroll;
+    height:45vh;
+
 }
-.subAuditLists{
+
+.subAuditLists {
     display: flex;
     flex-direction: row;
     gap: 10px;
@@ -142,6 +178,7 @@
     /* height: 49vh; */
     margin: 0 0 1% 0;
 
+
 }
 
 .subAuditLists app-sub-audit-list {
@@ -149,9 +186,9 @@
     width: 300px;
 }
 
-.failure-message{
+.failure-message {
     background-color: lightcoral;
-    display:flex;
+    display: flex;
     flex-direction: row;
     padding: 2px 10px;
     border-radius: 20px;
@@ -160,13 +197,62 @@
     justify-content: space-between;
 }
 
-.dialog{
-    display:flex;
+.dialog {
+    display: flex;
     flex-direction: column;
-    flex-grow:1;
-    justify-content: space-between;
+    height: 100%;
+    gap: 20px;
 }
 
-.error{
-    background-color: coral;
+.dialog-header {
+    text-align: center;
+    border-bottom: 2px solid var(--button-color);
+    padding-bottom: 15px;
+}
+
+.dialog-header h2 {
+    margin: 0;
+    color: var(--button-color);
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.dialog-content {
+    flex: 1;
+    display: flex;
+    min-height: 0;
+}
+
+/* Enhance dialog styling */
+::ng-deep .p-dialog .p-dialog-content {
+    padding: 0;
+    background: var(--section-primary);
+    border-radius: var(--border-radius);
+}
+
+::ng-deep .p-dialog {
+    border: 2px solid var(--button-color);
+    border-radius: calc(var(--border-radius) + 3px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+
+.error {
+    background-color: rgb(255, 106, 69);
+    width: 100%;
+    height: 100px;
+    display: flex;
+    align-content:center;
+    justify-content:center;
+    /* height: 100px; */
+    border-radius: var(--border-radius);
+}
+
+.control-buttons {
+    /* gap: 20px; */
+    gap: var(--gap-size);
+    display: flex;
+    flex-direction: row;
+    height:5vh;
 }

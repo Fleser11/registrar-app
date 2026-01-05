@@ -1,19 +1,116 @@
-:host{
-    /* display: flex; */
+:host {
+    display: flex;
     flex-direction: column;
-    display:flex;
-    /* flex:1; */
-
+    gap: 20px;
+    padding: 0;
+    height: 100%;
+    width: 100%;
 }
 
-p-listbox{
-    flex:1;
-    background-color: rgb(43, 43, 43);
-    /* color: rgb(172, 58, 58); */
+.audit-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
 }
 
-*{
-    /* --p-listbox-color: white; */
-    --p-listbox-option-color: white;
-    --p-listbox-border-color: gold;
+.audit-listbox {
+    min-height: 140px;
+    flex: 1;
+}
+
+h1 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: 0.5px;
+    padding: 0 4px;
+}
+
+p-listbox {
+    flex: 1;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Theme-matching color scheme for PrimeNG listbox */
+* {
+    /* Background colors - matching theme */
+    --p-listbox-background: var(--section-secondary);
+    --p-listbox-border-color: var(--border-color);
+    
+    /* Text colors */
+    --p-listbox-color: var(--text-primary);
+    --p-listbox-option-color: var(--text-secondary);
+    
+    /* Selected state - using theme gold */
+    --p-listbox-option-selected-background: var(--button-color);
+    --p-listbox-option-selected-color: var(--text-dark-primary);
+    
+    /* Hover state */
+    --p-listbox-option-hover-background: var(--button-hover-color);
+    --p-listbox-option-hover-color: var(--text-dark-primary);
+    
+    /* Focus state */
+    --p-listbox-option-focus-background: var(--section-primary);
+    --p-listbox-option-focus-color: var(--button-color);
+    
+    /* Border and outline */
+    --p-listbox-focus-ring: 2px solid var(--button-color);
+    --p-listbox-border-radius: var(--border-radius);
+}
+
+/* Additional styling for better appearance */
+::ng-deep .p-listbox {
+    border: 1px solid var(--p-listbox-border-color);
+    border-radius: var(--p-listbox-border-radius);
+    background: var(--p-listbox-background);
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+::ng-deep .p-listbox:focus-within {
+    border-color: var(--button-color);
+    box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.2);
+}
+
+::ng-deep .p-listbox .p-listbox-list-wrapper {
+    background: transparent;
+}
+
+::ng-deep .p-listbox .p-listbox-item {
+    padding: 12px 16px;
+    border: none;
+    transition: all 0.2s ease;
+    font-weight: 500;
+    border-bottom: 1px solid rgba(100, 100, 100, 0.2);
+    color: var(--p-listbox-option-color);
+}
+
+::ng-deep .p-listbox .p-listbox-item:last-child {
+    border-bottom: none;
+}
+
+::ng-deep .p-listbox .p-listbox-item:hover {
+    background: var(--p-listbox-option-hover-background);
+    color: var(--p-listbox-option-hover-color);
+    transform: translateX(4px);
+    font-weight: 600;
+}
+
+::ng-deep .p-listbox .p-listbox-item.p-highlight {
+    background: var(--p-listbox-option-selected-background);
+    color: var(--p-listbox-option-selected-color);
+    font-weight: 700;
+    box-shadow: inset 4px 0 0 var(--button-hover-color);
+}
+
+::ng-deep .p-listbox .p-listbox-item:focus {
+    outline: none;
+    background: var(--p-listbox-option-focus-background);
+    color: var(--p-listbox-option-focus-color);
+    box-shadow: inset 0 0 0 2px var(--button-color);
 }

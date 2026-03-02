@@ -9,11 +9,13 @@ git_push.sh
 index.ts
 model/audit.ts
 model/auditInfo.ts
+model/auditsAuditRunPost200Response.ts
 model/course.ts
 model/internalServerError.ts
 model/invalidInputError.ts
 model/missingItemError.ts
 model/models.ts
+model/pathway.ts
 model/runConfig.ts
 model/semConfig.ts
 model/subAudit.ts

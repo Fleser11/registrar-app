@@ -6,6 +6,8 @@ import { FormsModule } from '@angular/forms';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { DialogModule } from 'primeng/dialog';
 
+import { Tab, Tabs, TabList, TabPanel, TabPanels } from 'primeng/tabs';
+
 import { AuditSelector } from './audit-selector/audit-selector';
 import { Timeline } from './timeline/timeline';
 import { SubAuditList } from './sub-audit-list/sub-audit-list';
@@ -13,11 +15,11 @@ import { RunButton } from './run-button/run-button';
 import { CourseList } from './course-list/course-list';
 
 import { DefaultService } from '../generated/api/api/default.service';
-import { Audit } from '../generated/api';
+import { Audit, UnsolvableError } from '../generated/api';
 import { SubAudit } from '../generated/api';
 import { RunConfig } from '../generated/api';
-import { Course } from '../generated/api';
 import { ClearButton } from './clear-button/clear-button';
+import { TransferPage } from './transfer-page/transfer-page';
 
 @Component({
   selector: 'app-root',
@@ -31,19 +33,22 @@ import { ClearButton } from './clear-button/clear-button';
     ClearButton,
     CourseList,
     ProgressBarModule,
-    DialogModule
+    DialogModule,
+    TransferPage
   ],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
 export class App implements OnInit {
 
-  audits: string[] = []
-  genEds: string[] = []
+  audits: Audit[] = []
+  genEds: Audit[] = []
   courses: string[] = []
 
-  failed=false;
+  failed = false;
   errorMessage = "";
+
+  currentTab: string = 'timeline';
 
   loading: boolean = false;
 
@@ -51,19 +56,39 @@ export class App implements OnInit {
   genEdAudit: Audit | undefined;
 
   auditSelectorIsVisible = true;
-  
-  subAudits: SubAudit[] = [];
-
 
   @ViewChild('timeline') timeline!: Timeline;
+  @ViewChild('transferPage') transferPage!: TransferPage;
   @ViewChild('courseList') courseList!: CourseList;
+
+  get subAudits(): SubAudit[]{
+    let tmpArr: SubAudit[] = [];
+
+    if(this.audit){
+      this.audit?.subAudit?.forEach(
+        audit => {
+          tmpArr.push(audit)
+        }
+      )
+    }
+    if(this.genEdAudit){
+      this.genEdAudit?.subAudit?.forEach(
+        audit => {
+          tmpArr.push(audit)
+        }
+      )
+    }
+
+    return tmpArr;
+  }
 
   private defaultService: DefaultService;
   constructor(service: DefaultService) {
     this.defaultService = service;
   }
 
-  setAudit(audit: string){
+  setAudit(audit: string) {
+    console.log("set audit!!")
     this.defaultService.auditsAuditGet(audit).subscribe(
       (data) => {
         this.audit = data;
@@ -72,7 +97,7 @@ export class App implements OnInit {
     );
   }
 
-  setGenEd(audit: string){
+  setGenEd(audit: string) {
     this.defaultService.auditsAuditGet(audit).subscribe(
       (data) => {
         this.genEdAudit = data;
@@ -81,28 +106,26 @@ export class App implements OnInit {
     );
   }
 
-  updateCourseList() {
-    this.courses = this.getCourses();
-    //console.log(this.courseList);
-  }
 
-  parseCourses(str: string): string[]{
+
+
+  parseCourses(str: string): string[] {
     // Handle abstract courses
-    if(str.startsWith("abstract_")){
+    if (str.startsWith("abstract_")) {
       return [str];
     }
-    
+
     // Handle regular course codes using the Java pattern: ([a-zA-Z][a-zA-Z]+[0-9]{4})(\\(C\\))?
     // This matches: letter + letters + 4 digits + optional (C)
     const coursePattern = /([a-zA-Z][a-zA-Z]+[0-9]{4})(\(C\))?/g;
     const allMatches: string[] = [];
-    
+
     let match;
     while ((match = coursePattern.exec(str)) !== null) {
       // match[1] contains the course code without (C)
       allMatches.push(match[1]);
     }
-    
+
     // If no matches found, handle complex expressions like "CS1131 or (CS1121 and CS1122)"
     if (allMatches.length === 0) {
       // Try a broader pattern for course codes in complex expressions
@@ -111,27 +134,38 @@ export class App implements OnInit {
       while ((broadMatch = broadPattern.exec(str)) !== null) {
         allMatches.push(broadMatch[0]);
       }
-      
+
       // If still no matches, return the original string
       if (allMatches.length === 0) {
         allMatches.push(str);
       }
     }
-    
+
     //console.log("parsed " + str + " into " + allMatches);
     return allMatches;
   }
 
-  getCourses(): string[] {
-    if (!this.audit?.subAudit) {
-      return [];
+  updateCourseList() {
+    if (!this.audit?.subAudit && !this.audit?.subAudit) {
+      this.courses = [];
     }
-    return this.audit.subAudit.flatMap(subAudit => 
-      subAudit.courses ? subAudit.courses.flatMap(course => this.parseCourses(course)) : []
-    );
+    else {
+      this.courses = []
+      if (this.audit)
+        this.audit.subAudit.flatMap(subAudit =>
+          subAudit.courses ? subAudit.courses.flatMap(course => this.parseCourses(course)) : []
+        ).forEach(c => this.courses.push(c));
+      if (this.genEdAudit)
+        this.genEdAudit?.subAudit?.flatMap(subAudit =>
+          subAudit.courses ? subAudit.courses.flatMap(course => this.parseCourses(course)) : []
+        ).forEach(c => this.courses.push(c));
+    }
+    //console.log(this.courseList);
   }
 
-  format(str: string): string{
+
+
+  format(str: string): string {
     var match: RegExp = new RegExp("(abstract_)?(.*)")
     var arr = match.exec(str)
     //console.log(arr)
@@ -140,7 +174,7 @@ export class App implements OnInit {
     if (!arr || arr.length < 3) {
       return "app_" + str + "unparsable";
     }
-    return (arr[1]?arr[1].toString():"").concat(arr[2].toString());
+    return (arr[1] ? arr[1].toString() : "").concat(arr[2].toString());
   }
 
   // Format course name (similar to Java formatCourseName method)
@@ -161,58 +195,64 @@ export class App implements OnInit {
     this.auditSelectorIsVisible = false;
   }
 
-  clearCourseVal(): void{
+  clearCourseVal(): void {
     this.timeline.reset()
+    this.transferPage.resetVisibility();
     this.courseList.resetVisibility();
   }
 
   runCourseVal(): void {
-    //console.log(this.timeline.getCourses());
-
     this.loading = true;
-    this.failed=false
+    this.failed = false
     this.timeline.lockTimeline(true);
 
-
-
     let pathway = this.timeline.getPathway()
+    console.log(this.transferPage)
+
     var config: RunConfig = {
       genEdProgram: "GenEd",
-      pathway: pathway
+      pathway: { semesters: pathway },
+      transferCourses: this.transferPage.getCourses()
     }
-
-    //console.log("config")
-    //console.log(config)
-    if (this.audit?.info === undefined){
-      this.failed=true
-      this.loading=false
+    if (this.audit?.info === undefined) {
+      this.failed = true
+      this.loading = false
       this.errorMessage = "No audit selected"
       this.timeline.lockTimeline(false);
       return
     }
     this.defaultService.auditsAuditRunPost(this.audit["info"].code, config).subscribe(
-      {next: data=>{
-        //console.log(data)
-        this.loading=false
-        let timelineRet =[... data.map((semConfig) => {
-          return semConfig.courses? semConfig.courses.map(course => 
-            {
-              let courseFormatted = this.format(course)
-              this.courseList.setVisible(course, false)
-              return courseFormatted
-            }) : []
-        })]
-        this.timeline.populateTimeline(timelineRet)
-        this.timeline.lockTimeline(false);
-      },
-      error: err=>{
-        this.failed=true
-        this.loading=false
-        this.errorMessage = err.message
-        this.timeline.lockTimeline(false);
-        //console.log(err)
+      {
+        next: data => {
+          if ('semesters' in data && data.semesters) {
+
+            if (data.semesters) {
+              let timelineRet = [...data.semesters.map((semConfig) => {
+                return semConfig.courses ? semConfig.courses.map(course => {
+                  let courseFormatted = this.format(course)
+                  this.courseList.setVisible(course, false)
+                  return courseFormatted
+                }) : []
+              })]
+              this.timeline.populateTimeline(timelineRet)
+              this.timeline.lockTimeline(false);
+            }
+          }
+          else {
+            this.failed = true
+            this.errorMessage = "Unsolvable audit"
+            this.timeline.lockTimeline(false);
+          }
+          this.loading = false
+        },
+        error: err => {
+          this.failed = true
+          this.loading = false
+          this.errorMessage = err.message
+          this.timeline.lockTimeline(false);
+          //console.log(err)
+        }
       }
-    }
     )
   }
 
@@ -222,21 +262,21 @@ export class App implements OnInit {
       (data) => {
         const tempAudits: string[] = [];
         const tempGenEds: string[] = [];
-        
+
         data.forEach(audit => {
           console.log(audit)
-          if(audit.info?.isGenEd == false && audit.info?.code){
-            tempAudits.push(audit.info.code);
-          } else if (audit.info?.isGenEd == true && audit.info?.code){
-            tempGenEds.push(audit.info.code);
+          if (audit.info?.isGenEd == false && audit.info?.code) {
+            this.audits.push(audit);
+          } else if (audit.info?.isGenEd == true && audit.info?.code) {
+            this.genEds.push(audit);
           }
         });
-        
-        this.audits = tempAudits;
-        this.genEds = tempGenEds;
+
+        // this.audits = tempAudits;
+        // this.genEds = tempGenEds;
         // console.log(this.audits);
         // console.log(this.genEds);
-        
+
       }
     );
     // this.defaultService.coursesGet().subscribe(
@@ -246,7 +286,7 @@ export class App implements OnInit {
     // );
   }
 
-  dropCourse(course: string): void{
+  dropCourse(course: string): void {
     //console.log("setting course visible")
     this.courseList.setVisible(course, true)
   }

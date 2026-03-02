@@ -9,12 +9,14 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { UnsolvableError } from './unsolvableError';
 import { Pathway } from './pathway';
+import { SemConfig } from './semConfig';
 
 
-export interface RunConfig { 
-    genEdProgram?: string;
-    pathway?: Pathway;
-    transferCourses?: Array<string>;
-}
+/**
+ * @type AuditsAuditRunPost200Response
+ * @export
+ */
+export type AuditsAuditRunPost200Response = Pathway | UnsolvableError;
 

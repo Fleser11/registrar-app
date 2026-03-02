@@ -21,6 +21,8 @@ import { Observable }                                        from 'rxjs';
 // @ts-ignore
 import { Audit } from '../model/audit';
 // @ts-ignore
+import { AuditsAuditRunPost200Response } from '../model/auditsAuditRunPost200Response';
+// @ts-ignore
 import { Course } from '../model/course';
 // @ts-ignore
 import { InternalServerError } from '../model/internalServerError';
@@ -30,8 +32,6 @@ import { InvalidInputError } from '../model/invalidInputError';
 import { MissingItemError } from '../model/missingItemError';
 // @ts-ignore
 import { RunConfig } from '../model/runConfig';
-// @ts-ignore
-import { SemConfig } from '../model/semConfig';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -176,9 +176,9 @@ export class DefaultService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public auditsAuditRunPost(audit: string, runConfig: RunConfig, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<SemConfig>>;
-    public auditsAuditRunPost(audit: string, runConfig: RunConfig, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<SemConfig>>>;
-    public auditsAuditRunPost(audit: string, runConfig: RunConfig, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<SemConfig>>>;
+    public auditsAuditRunPost(audit: string, runConfig: RunConfig, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<AuditsAuditRunPost200Response>;
+    public auditsAuditRunPost(audit: string, runConfig: RunConfig, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<AuditsAuditRunPost200Response>>;
+    public auditsAuditRunPost(audit: string, runConfig: RunConfig, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<AuditsAuditRunPost200Response>>;
     public auditsAuditRunPost(audit: string, runConfig: RunConfig, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (audit === null || audit === undefined) {
             throw new Error('Required parameter audit was null or undefined when calling auditsAuditRunPost.');
@@ -233,7 +233,7 @@ export class DefaultService {
         }
 
         let localVarPath = `/audits/${this.configuration.encodeParam({name: "audit", value: audit, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/run`;
-        return this.httpClient.request<Array<SemConfig>>('post', `${this.configuration.basePath}${localVarPath}`,
+        return this.httpClient.request<AuditsAuditRunPost200Response>('post', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 body: runConfig,

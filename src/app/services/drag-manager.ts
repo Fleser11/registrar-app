@@ -5,8 +5,9 @@ import { Observable } from "rxjs";
 export class DragManager {
 
 
-    static currentItem: Draggable;
-    static success: boolean = false;
+    private static currentItem: Draggable;
+    private static passBackItem: any;
+    private static success: boolean = false;
 
 
     static setSuccess(value: boolean): void {
@@ -25,6 +26,14 @@ export class DragManager {
     static getCurrentItem(): any {
         return this.currentItem;
     }
+
+    static setPassBackItem(item: any): void{
+        this.passBackItem = item;
+    }
+
+    static getPassBackItem(): any{
+        return this.passBackItem;
+    }
 }
 
 
@@ -39,6 +48,7 @@ export abstract class Draggable{
         this.data = data;
         DragManager.setCurrentItem(this);
         DragManager.setSuccess(false);
+        DragManager.setPassBackItem(null);
         //console.log("drag started: success status: " + DragManager.isSuccessful());
     }
     abstract onDragEnd(event: any): void;

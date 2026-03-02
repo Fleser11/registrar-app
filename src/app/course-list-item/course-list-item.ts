@@ -46,10 +46,15 @@ export class CourseListItem extends Draggable{
 
   override onDragStart(event: any, data: any): void{
     super.onDragStart(event, data);
-    this.setVisibility.emit(false);
+    console.log(this.course)
+    if(!this.course.includes("abstract_")){
+      this.setVisibility.emit(false);
+      this.hidden = true;
+
+    }
+
     //console.log("drag started from course list item: " + this.course)
 
-    this.hidden = true;
   }
 
   override onDragEnd(event: any): void{

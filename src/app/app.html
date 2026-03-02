@@ -5,19 +5,14 @@
       <h2>Select Audit Programs</h2>
     </div>
     <div class="dialog-content">
-      <app-audit-selector 
-        [audits]="audits" 
-        [genEds]="genEds" 
-        [selectAudit]="setAudit.bind(this)"
+      <app-audit-selector [audits]="audits" [genEds]="genEds" [selectAudit]="setAudit.bind(this)"
         [selectGenEd]="setGenEd.bind(this)">
       </app-audit-selector>
     </div>
     <button class="done-button" (click)="closeAuditSelector()">Done</button>
   </div>
 </p-dialog>
-
 <div class="app">
-
   <div *ngIf="loading" class="loading">
     <!-- <h1> hello</h1> -->
     <p-progressbar styleClass="custom-bar" mode="indeterminate"></p-progressbar>
@@ -26,10 +21,7 @@
   <div *ngIf="failed" class="error">
     <p>Non-Satisfiable Scenario</p>
   </div>
-
-
   <div class="display">
-
     <div class="left-bar">
       <button class="hamburger-button" (click)="auditSelectorIsVisible = true">
         <svg style="width: 30px; height: 24px; background-color:white">
@@ -41,27 +33,29 @@
       <app-course-list #courseList [courses]="courses"></app-course-list>
     </div>
     <div class="right">
-      <div class="timeline">
-        <app-timeline 
-          (dropCourse) = "dropCourse($event)"
-          #timeline>
-        </app-timeline>
-      </div>
+          <div class="tab-buttons">
+            <button class="tab-button" [class.active]="currentTab === 'timeline'" (click)="currentTab='timeline'">
+              <h2>Timeline</h2>
+            </button>
+            <button class="tab-button" [class.active]="currentTab === 'transfer-page'" (click)="currentTab='transfer-page'">
+              <h2>Transfer Page</h2>
+            </button>
+          </div>
+          <div [class.active]="currentTab === 'transfer-page'" class="tab transfer-page" value="transfer-page">
+            <app-transfer-page (dropCourse)="dropCourse($event)" #transferPage>
+            </app-transfer-page>
+          </div>
+          <div [class.active]="currentTab === 'timeline'" class="tab timeline" value="timeline">
+            <app-timeline (dropCourse)="dropCourse($event)" #timeline>
+            </app-timeline>
+          </div>
       <div class="control-buttons">
         <app-clear-button [callback]="clearCourseVal.bind(this)"></app-clear-button>
         <app-run-button [callback]="runCourseVal.bind(this)"></app-run-button>
       </div>
-
       <div class="subaudits">
-        <ng-container *ngIf="audit && genEdAudit">
-
-          <ng-container *ngFor="let subAudit of audit.subAudit">
-            <app-sub-audit-list [subAudit]="subAudit"></app-sub-audit-list>
-          </ng-container>
-          <ng-container *ngFor="let subAudit of genEdAudit.subAudit">
-            <app-sub-audit-list [subAudit]="subAudit"></app-sub-audit-list>
-          </ng-container>
-
+        <ng-container *ngFor="let subAudit of subAudits">
+          <app-sub-audit-list [subAudit]="subAudit"></app-sub-audit-list>
         </ng-container>
       </div>
     </div>

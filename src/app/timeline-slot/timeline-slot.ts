@@ -30,6 +30,11 @@ export class TimelineSlot extends Draggable {
   stateLocked: boolean = false;
 
   stateValue: STATE = STATE.ENABLED;
+
+  // override id = TimelineSlot.toString();
+
+
+
   get state(): STATE {
     return this.stateValue ;
   }
@@ -45,20 +50,22 @@ export class TimelineSlot extends Draggable {
 
   setCourseHelper(course: string){
     this.setCourse.emit(course);
-    console.log("setting state to filled")
+    // console.log("setting state to filled")
     this.setState.emit(STATE.FILLED)
     this.state = STATE.FILLED
   }
 
   onDrop(event: any): any{
+    if (DragManager.getPassBackItem()){
+      DragManager.getPassBackItem()(this.course);
+    }
     this.setCourseHelper(DragManager.getCurrentItem().data)
-    // this.course = DragManager.getCurrentItem().data
-    //console.log("dropped current item: " + this.course)
     DragManager.setCurrentItem(null);
-    DragManager.success = true;
+    DragManager.setSuccess(true);
     console.log("setting state to filled")
     this.setState.emit(STATE.FILLED)
     this.state = STATE.FILLED
+    this.locked = true;
   }
 
   format(str: string): string{
@@ -81,19 +88,14 @@ export class TimelineSlot extends Draggable {
     return "";
   }
 
-  ngOnChanges() {
-    //console.log("Course input changed:", this.course);
-    if (this.courseDiv) {
-      this.courseDiv.nativeElement.style.cursor = this.hasValue() ? 'grab' : 'default';
-      this.locked = this.hasValue();
-    }
-  }
+
 
   override onDragStart(event: any, data: any){
     this.setCourse.emit(null);
     // this.course = ""
     this.locked = false;
     super.onDragStart(event, data)
+    DragManager.setPassBackItem(this.setCourseHelper.bind(this))
   }
 
   override onDragEnd(event: any): void{
@@ -102,6 +104,14 @@ export class TimelineSlot extends Draggable {
       // this.course = this.data
     }
       
+  }
+
+  override onDragOver(event: any): void{
+    
+    if(this.state == STATE.ENABLED || (this.state == STATE.FILLED && DragManager.getPassBackItem())){
+      event.preventDefault()
+    }
+
   }
 
   disable(): void{
@@ -123,10 +133,8 @@ export class TimelineSlot extends Draggable {
   clear(): void{
     if(!this.stateLocked){
       this.resetCourse.emit(this.course)
-      console.log("runnign clear")
       this.state = STATE.ENABLED
       this.setCourse.emit(null);
-      console.log("runnign emit state: " + this.state)
       this.setState.emit(this.state);
 
     }

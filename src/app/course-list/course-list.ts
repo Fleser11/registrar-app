@@ -1,7 +1,5 @@
 import { Component, Input, ViewChildren } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Course } from '../../generated/api';
-import { DragManager } from '../services/drag-manager';
 import { CourseListItem } from '../course-list-item/course-list-item';
 import { SearchBar } from '../search-bar/search-bar';
 

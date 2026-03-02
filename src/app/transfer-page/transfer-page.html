@@ -1,0 +1,10 @@
+<div class="drop-zone"
+    (dragover)="onDragOver($event)"
+    (drop)="onDrop($event)"
+    (dragend)="onDragEnd($event)"
+    >
+    <ng-container *ngFor="let course of courses">
+        <app-transfer-page-course [course]="course" (clearCourse)="removeCourse(course)"></app-transfer-page-course>
+    </ng-container>
+
+</div>

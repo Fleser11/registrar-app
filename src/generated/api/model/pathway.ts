@@ -9,12 +9,10 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { Pathway } from './pathway';
+import { SemConfig } from './semConfig';
 
 
-export interface RunConfig { 
-    genEdProgram?: string;
-    pathway?: Pathway;
-    transferCourses?: Array<string>;
+export interface Pathway { 
+    semesters?: Array<SemConfig>;
 }
 

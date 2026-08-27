@@ -1,0 +1,1 @@
+docker build -t registrar-frontend:0.0.5 .

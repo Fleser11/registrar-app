@@ -9,6 +9,11 @@
     display:none;
 }
 
+:host {
+    display: block;
+    min-width: 0;
+}
+
 div {
     /* padding: 8px; */
     height: calc(1/7 * 50vh - var(--gap-size) * 1);
@@ -18,8 +23,12 @@ div {
     cursor: grab;
     transition: all 0.2s ease;
     user-select: none;
-    word-wrap: break-word;
-    flex-shrink: 0;
+    overflow-wrap: normal;
+    word-break: keep-all;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-shrink: 1;
     text-align: center;
     align-content: center;
 }

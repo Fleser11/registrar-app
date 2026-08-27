@@ -30,24 +30,15 @@
     box-sizing: border-box;
     height: 100vh;
     overflow-y: auto;
-    overflow-x: hidden;
+    /* overflow-x: hidden; */
+    
 
 }
 
 .left-bar app-course-list {
     overflow-y: scroll;
+    overflow-x: hidden;
 }
-
-/* .right {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    box-sizing: border-box;
-    height: 100vh;
-    overflow: auto;
-    gap: 10px;
-    padding-right: 10px;
-} */
 
 .right {
     display: flex;

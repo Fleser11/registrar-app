@@ -21,6 +21,8 @@ import { RunConfig } from '../generated/api';
 import { ClearButton } from './clear-button/clear-button';
 import { TransferPage } from './transfer-page/transfer-page';
 
+import { OVERLAY_STATUS } from './timeline/timeline';
+
 @Component({
   selector: 'app-root',
   imports: [
@@ -202,7 +204,8 @@ export class App implements OnInit {
   }
 
   runCourseVal(): void {
-    this.loading = true;
+    // this.loading = true;
+    this.timeline.setOverlay(OVERLAY_STATUS.LOADING, null);
     this.failed = false
     this.timeline.lockTimeline(true);
 

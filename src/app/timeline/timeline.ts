@@ -6,6 +6,12 @@ import { RunConfig } from '../../generated/api/model/runConfig';
 import { SemConfig } from '../../generated/api';
 import { CourseList } from '../course-list/course-list';
 
+export enum OVERLAY_STATUS {
+  OFF,
+  LOADING,
+  ERROR
+}
+
 @Component({
   selector: 'app-timeline',
   imports: [TimelineSlot, CommonModule],
@@ -20,6 +26,9 @@ export class Timeline {
   @Output() dropCourse: EventEmitter<string> = new EventEmitter<string>();
 
   @ViewChildren('timelineSlot') timelineSlots !: QueryList<TimelineSlot>;
+
+  readonly OVERLAY_STATUS = OVERLAY_STATUS;
+  overlayStatus: OVERLAY_STATUS = OVERLAY_STATUS.OFF;
 
 
 
@@ -39,7 +48,7 @@ export class Timeline {
 
   getSemester(i: number): SemConfig {
     return {
-      courses: this.courseVal[i].filter(course => course != null),
+      courses: this.courseVal[i].filter(course => course != null).filter(course => course != ""),
       numCourses: this.stateVals[i].filter(state => {
         console.log(state)
         return state != STATE.DISABLED
@@ -123,6 +132,10 @@ export class Timeline {
     }
   }
 
+  setOverlay(status: OVERLAY_STATUS, message: string | null){
+    this.overlayStatus = status;
+  }
+
   reset(){
     this.timelineSlots.forEach(
       courseSlot => {
@@ -130,7 +143,10 @@ export class Timeline {
         console.log(courseSlot.stateValue)
       }
     )
+    this.overlayStatus = OVERLAY_STATUS.OFF;
     console.log(this.stateVals)
   }
+
+
 
 }

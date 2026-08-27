@@ -103,6 +103,10 @@ export class TimelineSlot extends Draggable {
       this.setCourse.emit(this.data);
       // this.course = this.data
     }
+    else{
+      this.state = STATE.ENABLED
+      this.setState.emit(this.state)
+    }
       
   }
 

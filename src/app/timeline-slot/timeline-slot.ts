@@ -3,6 +3,8 @@ import { Draggable, DragManager } from '../services/drag-manager';
 import { DragDropModule } from 'primeng/dragdrop';
 import { CommonModule } from '@angular/common';
 import { delay } from 'rxjs';
+import { CourseInfoService } from '../services/course-info';
+import { ShrinkToFit } from '../services/shrink-to-fit';
 
 
 export enum STATE{
@@ -13,7 +15,7 @@ export enum STATE{
 
 @Component({
   selector: 'app-timeline-slot',
-  imports: [DragDropModule, CommonModule],
+  imports: [DragDropModule, CommonModule, ShrinkToFit],
   templateUrl: './timeline-slot.html',
   styleUrl: './timeline-slot.css'
 })
@@ -30,6 +32,22 @@ export class TimelineSlot extends Draggable {
   stateLocked: boolean = false;
 
   stateValue: STATE = STATE.ENABLED;
+
+  hoverTooltip: string = '';
+
+  @HostBinding('class.glow') glowing = false;
+
+  triggerGlow(): void {
+    this.glowing = false;
+    requestAnimationFrame(() => {
+      this.glowing = true;
+      setTimeout(() => this.glowing = false, 1000);
+    });
+  }
+
+  constructor(private courseInfo: CourseInfoService) {
+    super();
+  }
 
   // override id = TimelineSlot.toString();
 
@@ -72,13 +90,13 @@ export class TimelineSlot extends Draggable {
     var match: RegExp = new RegExp("(abstract_)?(.*)")
     var arr = match.exec(str)
     if (arr && arr[2]) {
-      return arr[2];
+      return this.courseInfo.displayLabel(arr[2]);
     }
     //console.log("unparsable: "+str)
     //console.log(arr)
     // if (arr)
       //console.log(arr[2]);
-    return arr && arr[2] ? arr[2].toString() : "timeline_" + str + "unparsable";
+    return arr && arr[2] ? this.courseInfo.displayLabel(arr[2].toString()) : "timeline_" + str + "unparsable";
   }
 
   coursef(course: string | null): string{
@@ -86,6 +104,23 @@ export class TimelineSlot extends Draggable {
       return this.format(course);
     }
     return "";
+  }
+
+  updateTooltip(): void {
+    if (!this.course) {
+      this.hoverTooltip = '';
+      return;
+    }
+    const label = this.coursef(this.course);
+    this.hoverTooltip = label;
+    if (this.course.startsWith('abstract_')) {
+      return;
+    }
+    this.courseInfo.getCourse(this.course).subscribe(info => {
+      if (info) {
+        this.hoverTooltip = this.courseInfo.describe(info) || label;
+      }
+    });
   }
 
 

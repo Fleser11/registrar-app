@@ -1,9 +1,10 @@
-<app-search-bar 
+<app-search-bar
+    [value]="searchTerm"
     (searchChange)="onSearchChange($event)">
 </app-search-bar>
 <p></p>
 <div class="course-list">
-    <ng-container *ngFor="let course of courses; let i = index">
+    <ng-container *ngFor="let course of sortedCourses; let i = index">
         <app-course-list-item
             [course]="course"
             [searchTerm]="matchesSearch(course)">

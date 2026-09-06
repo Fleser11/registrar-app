@@ -16,6 +16,14 @@ export class AuditSelector {
   @Input() genEds: Audit[] = [];
   @Input() selectAudit!: (audit: string) => void;
   @Input() selectGenEd!: (genEd: string) => void;
+  @Input() selectedGenEd = '';
+
+  get selectedGenEdDisplay(): string {
+    const audit = this.genEds.find(item => item.info?.code === this.selectedGenEd);
+    return audit?.info?.code && audit.info.program
+      ? audit.info.code + ' - ' + audit.info.program
+      : '';
+  }
 
   get f_audits(): string[]{
     let ret: string[] = [];
@@ -38,9 +46,11 @@ export class AuditSelector {
   }
 
   onAuditChange(event: any): void {
-    this.selectAudit(event.value.match(/^([a-zA-Z0-9]+)\s\-/)[1]);
+    const match = typeof event.value === 'string' ? event.value.match(/^([a-zA-Z0-9]+)\s\-/) : null;
+    this.selectAudit(match ? match[1] : '');
   }
   onSubAuditChange(event: any): void {
-    this.selectGenEd(event.value.match(/^([a-zA-Z0-9]+)\s\-/)[1]);
+    const match = typeof event.value === 'string' ? event.value.match(/^([a-zA-Z0-9]+)\s\-/) : null;
+    this.selectGenEd(match ? match[1] : '');
   }
 }

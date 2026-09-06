@@ -1,6 +1,5 @@
-<div class="course">
-    {{coursef(course)}}
-
+<div class="course" [attr.title]="hoverTooltip || coursef(course) || null" (mouseenter)="updateTooltip()">
+    <span class="course-label" appShrinkToFit>{{coursef(course)}}</span>
 </div>
 <div class="icon-circle" (click)="clear()">
     &#8617;

@@ -1,2 +1,6 @@
 
-<div (click)="run()">&#9654;</div>
+<button type="button" [disabled]="disabled" (click)="run()"
+    [title]="disabled ? 'Generating a schedule from your selected audits and transfer courses…' : 'Generate a schedule using your selected audits and transfer courses'">
+    {{ disabled ? 'Generating schedule...' : 'Generate schedule' }}
+    <span class="credits-badge" *ngIf="!disabled">{{ totalCredits }} credits</span>
+</button>

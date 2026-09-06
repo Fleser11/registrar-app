@@ -3,21 +3,23 @@
     flex-direction: column;
     gap: 20px;
     padding: 0;
-    height: 100%;
     width: 100%;
+    height: 100%;
+    min-height: 0;
 }
 
 .audit-section {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    flex: 1;
+    flex: 1 1 0;
     min-width: 0;
+    min-height: 0;
 }
 
 .audit-listbox {
-    min-height: 140px;
     flex: 1;
+    min-height: 0;
 }
 
 h1 {
@@ -31,9 +33,22 @@ h1 {
 
 p-listbox {
     flex: 1;
+    min-height: 0;
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+::ng-deep .audit-listbox .p-listbox {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+::ng-deep .audit-listbox .p-listbox-list-container {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
 }
 
 /* Theme-matching color scheme for PrimeNG listbox */
@@ -44,7 +59,7 @@ p-listbox {
     
     /* Text colors */
     --p-listbox-color: var(--text-primary);
-    --p-listbox-option-color: var(--text-secondary);
+    --p-listbox-option-color: var(--text-primary);
     
     /* Selected state - using theme gold */
     --p-listbox-option-selected-background: var(--button-color);
@@ -63,4 +78,6 @@ p-listbox {
     --p-listbox-border-radius: var(--border-radius);
 }
 
-/*  */
+::ng-deep .p-listbox-option {
+    font-weight: 600;
+}

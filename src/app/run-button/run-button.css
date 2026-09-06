@@ -2,15 +2,36 @@
     flex-grow:1;
 }
 
-div{
+button{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    width: 100%;
+    height: 100%;
     background-color: rgb(82, 201, 52);
     color: black;
     padding: 10px;
     border-radius: var(--border-radius);
     text-align: center;
+    border: none;
+    font: inherit;
+    font-weight: 700;
 }
 
-div:hover{
+.credits-badge {
+    font-size: 0.65em;
+    font-weight: 500;
+    opacity: 0.8;
+}
+
+button:hover:not(:disabled){
     cursor: pointer;
     background-color: rgb(60, 146, 38);
+}
+
+button:disabled{
+    opacity: 0.55;
+    cursor: not-allowed;
 }

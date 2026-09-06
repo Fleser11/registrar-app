@@ -7,6 +7,6 @@
 
 <div class="audit-section">
   <h1>General Education Audit</h1>
-  <p-listbox [options]="f_genEds" (onChange)="onSubAuditChange($event)" class="audit-listbox">
+  <p-listbox [options]="f_genEds" [ngModel]="selectedGenEdDisplay" (onChange)="onSubAuditChange($event)" class="audit-listbox">
   </p-listbox>
 </div>

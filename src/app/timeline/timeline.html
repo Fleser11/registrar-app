@@ -1,8 +1,9 @@
 
-<div class="overlay" *ngIf="overlayStatus != OVERLAY_STATUS.OFF">
+<div class="overlay" *ngIf="overlayStatus != OVERLAY_STATUS.OFF"
+    [attr.aria-busy]="overlayStatus == OVERLAY_STATUS.LOADING">
     <div class="overlay-loading-bar"
         *ngIf="overlayStatus == OVERLAY_STATUS.LOADING">
-        <div class="loading-bar"></div>
+        <div class="loading-bar" role="progressbar" aria-label="Generating schedule"></div>
     </div>
     <div class="overlay-error"
         *ngIf="overlayStatus == OVERLAY_STATUS.ERROR">
@@ -10,19 +11,27 @@
     </div>
 </div>
 
-<div *ngFor="let i of range(8)"
-class="semesters"
->
-    <div class="semester-header">
-        Semester {{i + 1}}
+<div class="semesters-row">
+    <div *ngFor="let i of range(semesterCount)"
+    class="semesters"
+    [class.disabled]="isSemesterDisabled(i)"
+    >
+        <div class="semester-header">
+            <span class="semester-title">Sem {{i + 1}}</span>
+            <span class="semester-credits">{{semesterCredits[i]}} cr</span>
+            <div *ngIf="canDisable(i) && !isSemesterDisabled(i)" class="icon-circle" [title]="canRemove(i) ? 'Remove semester ' + (i + 1) : 'Disable semester ' + (i + 1)" (click)="onHeaderIconClick(i)">&#10006;</div>
+            <div *ngIf="canDisable(i) && isSemesterDisabled(i)" class="icon-circle plus" title="Enable semester {{i + 1}}" (click)="toggleSemesterDisabled(i)">+</div>
+        </div>
+
+        <div *ngFor="let j of range(6)" class="course">
+            <app-timeline-slot #timelineSlot
+                (resetCourse)="resetCourse($event)"
+                (setCourse)="setCourse($event, i, j)"
+                (setState)="setState($event, i, j)"
+                [course]="currentCourse(i, j)">
+            </app-timeline-slot>
+        </div>
     </div>
-    
-    <div *ngFor="let j of range(6)" class="course">
-        <app-timeline-slot #timelineSlot
-            (resetCourse)="resetCourse($event)"
-            (setCourse)="setCourse($event, i, j)"
-            (setState)="setState($event, i, j)"
-            [course]="currentCourse(i, j)">
-        </app-timeline-slot>
-    </div>
+
+    <button *ngIf="semesterCount < maxSemesterCount" type="button" class="add-semester-column" title="Add a semester" (click)="addSemester()">+</button>
 </div>

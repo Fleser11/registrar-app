@@ -1,29 +1,55 @@
-<p-dialog [modal]="true" [(visible)]="auditSelectorIsVisible" [style]="{width: '60vw', height: '60vh'}"
-  [closable]="false">
-  <div class="dialog">
+<div class="modal-overlay" *ngIf="auditSelectorIsVisible">
+  <div class="modal-panel menu-panel">
+    <div class="dialog">
+      <div class="dialog-header">
+        <h2>Menu</h2>
+      </div>
+      <div class="tab-buttons menu-tab-buttons">
+        <button class="tab-button" [class.active]="menuTab === 'audits'" (click)="menuTab='audits'">
+          <h2>Audits</h2>
+        </button>
+        <button class="tab-button" [class.active]="menuTab === 'extra-restrictions'" (click)="menuTab='extra-restrictions'">
+          <h2>Extra Restrictions</h2>
+        </button>
+        <button class="tab-button" [class.active]="menuTab === 'instructions'" (click)="menuTab='instructions'">
+          <h2>Instructions</h2>
+        </button>
+      </div>
+      <div class="dialog-content">
+        <div [class.active]="menuTab === 'audits'" class="tab menu-tab">
+          <app-audit-selector [audits]="audits" [genEds]="genEds" [selectedGenEd]="genEdAudit?.info?.code ?? ''" [selectAudit]="setAudit.bind(this)"
+            [selectGenEd]="setGenEd.bind(this)">
+          </app-audit-selector>
+        </div>
+        <div [class.active]="menuTab === 'extra-restrictions'" class="tab menu-tab">
+          <app-extra-restrictions></app-extra-restrictions>
+        </div>
+        <div [class.active]="menuTab === 'instructions'" class="tab menu-tab">
+          <app-instructions></app-instructions>
+        </div>
+      </div>
+      <button class="done-button" (click)="closeAuditSelector()">Done</button>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" *ngIf="clearDialogVisible">
+  <div class="modal-panel confirm-panel">
     <div class="dialog-header">
-      <h2>Select Audit Programs</h2>
+      <h2>Clear schedule?</h2>
     </div>
-    <div class="dialog-content">
-      <app-audit-selector [audits]="audits" [genEds]="genEds" [selectAudit]="setAudit.bind(this)"
-        [selectGenEd]="setGenEd.bind(this)">
-      </app-audit-selector>
+    <div class="confirm-body">
+      <p>This clears <strong>both</strong> the timeline and the transfer page — all placed courses will be removed.</p>
+      <div class="dialog-actions">
+        <button type="button" (click)="clearDialogVisible = false">Cancel</button>
+        <button type="button" (click)="confirmClearAll()">Clear</button>
+      </div>
     </div>
-    <button class="done-button" (click)="closeAuditSelector()">Done</button>
   </div>
-</p-dialog>
+</div>
 <div class="app">
-  <div *ngIf="loading" class="loading">
-    <!-- <h1> hello</h1> -->
-    <p-progressbar styleClass="custom-bar" mode="indeterminate"></p-progressbar>
-    <!-- <h1>Loading...</h1> -->
-  </div>
-  <div *ngIf="failed" class="error">
-    <p>Non-Satisfiable Scenario</p>
-  </div>
-  <div class="display">
-    <div class="left-bar">
-      <button class="hamburger-button" (click)="auditSelectorIsVisible = true">
+  <div class="display" #display>
+    <div class="left-bar" [style.flex-basis.%]="sidebarWidth">
+      <button class="hamburger-button" title="Open audit/program selector" aria-label="Open audit/program selector" (click)="auditSelectorIsVisible = true">
         <svg style="width: 30px; height: 24px; background-color:white">
           <rect y="4" width="30" height="4"></rect>
           <rect y="12" width="30" height="4"></rect>
@@ -32,7 +58,13 @@
       </button>
       <app-course-list #courseList [courses]="courses"></app-course-list>
     </div>
-    <div class="right">
+    <div class="vertical-resizer" role="separator" aria-label="Resize course list"
+      (pointerdown)="startSidebarResize($event)"
+      (pointermove)="resizeSidebar($event)"
+      (pointerup)="stopSidebarResize()"
+      (pointercancel)="stopSidebarResize()"></div>
+    <div class="right" #right
+      [style.--timeline-height]="workspaceHeight ? workspaceHeight + 'px' : null">
           <div class="tab-buttons">
             <button class="tab-button" [class.active]="currentTab === 'timeline'" (click)="currentTab='timeline'">
               <h2>Timeline</h2>
@@ -46,16 +78,38 @@
             </app-transfer-page>
           </div>
           <div [class.active]="currentTab === 'timeline'" class="tab timeline" value="timeline">
+            <div *ngIf="failed" class="scenario-warning-overlay">
+              <div class="scenario-warning">
+                <button type="button" class="scenario-warning-dismiss" title="Dismiss" aria-label="Dismiss warning" (click)="failed = false">×</button>
+                <p class="scenario-warning-title">Non-Satisfiable Scenario</p>
+                <!-- Room for a future detailed explanation of why the schedule couldn't be solved -->
+              </div>
+            </div>
             <app-timeline (dropCourse)="dropCourse($event)" #timeline>
             </app-timeline>
           </div>
+      <div class="horizontal-resizer" role="separator" aria-label="Resize timeline and requirements"
+        (pointerdown)="startWorkspaceResize($event)"
+        (pointermove)="resizeWorkspace($event)"
+        (pointerup)="stopWorkspaceResize()"
+        (pointercancel)="stopWorkspaceResize()"></div>
       <div class="control-buttons">
-        <app-clear-button [callback]="clearCourseVal.bind(this)"></app-clear-button>
-        <app-run-button [callback]="runCourseVal.bind(this)"></app-run-button>
+        <div class="clear-control" [class.menu-open]="clearMenuOpen">
+          <app-clear-button [callback]="requestClearAll.bind(this)" [disabled]="loading"
+            ></app-clear-button>
+          <button type="button" class="clear-menu-trigger" title="Clear just one page instead of both" aria-label="Clear just one page instead of both"
+            [disabled]="loading" (click)="clearMenuOpen = !clearMenuOpen">⌄</button>
+          <div class="clear-menu" *ngIf="clearMenuOpen">
+            <button type="button" title="Clear only the timeline, leaving transfer courses untouched" (click)="clearTimelineOnly()">Clear timeline only</button>
+            <button type="button" title="Clear only the transfer courses, leaving the timeline untouched" (click)="clearTransferOnly()">Clear transfer courses only</button>
+          </div>
+        </div>
+        <app-run-button [callback]="runCourseVal.bind(this)" [disabled]="loading" [totalCredits]="timeline?.totalCredits ?? 0"></app-run-button>
       </div>
       <div class="subaudits">
-        <ng-container *ngFor="let subAudit of subAudits">
-          <app-sub-audit-list [subAudit]="subAudit"></app-sub-audit-list>
+        <ng-container *ngFor="let subAudit of sortedSubAudits">
+          <app-sub-audit-list [subAudit]="subAudit" [placedCourses]="placedCourses"
+            (courseClick)="onSubAuditCourseClick($event)"></app-sub-audit-list>
         </ng-container>
       </div>
     </div>

@@ -1,12 +1,8 @@
-import { Component, signal, OnInit, ViewChild, ViewEncapsulation, ComponentFactoryResolver } from '@angular/core';
+import { Component, signal, OnInit, ViewChild, ViewEncapsulation, ComponentFactoryResolver, HostListener, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 
 import { FormsModule } from '@angular/forms';
-import { ProgressBarModule } from 'primeng/progressbar';
-import { DialogModule } from 'primeng/dialog';
-
-import { Tab, Tabs, TabList, TabPanel, TabPanels } from 'primeng/tabs';
 
 import { AuditSelector } from './audit-selector/audit-selector';
 import { Timeline } from './timeline/timeline';
@@ -20,8 +16,11 @@ import { SubAudit } from '../generated/api';
 import { RunConfig } from '../generated/api';
 import { ClearButton } from './clear-button/clear-button';
 import { TransferPage } from './transfer-page/transfer-page';
+import { ExtraRestrictions } from './extra-restrictions/extra-restrictions';
+import { Instructions } from './instructions/instructions';
 
 import { OVERLAY_STATUS } from './timeline/timeline';
+import { isSubAuditSatisfied } from './services/audit-utils';
 
 @Component({
   selector: 'app-root',
@@ -34,9 +33,9 @@ import { OVERLAY_STATUS } from './timeline/timeline';
     RunButton,
     ClearButton,
     CourseList,
-    ProgressBarModule,
-    DialogModule,
-    TransferPage
+    TransferPage,
+    ExtraRestrictions,
+    Instructions
   ],
   templateUrl: './app.html',
   styleUrl: './app.css',
@@ -51,8 +50,15 @@ export class App implements OnInit {
   errorMessage = "";
 
   currentTab: string = 'timeline';
+  menuTab: string = 'audits';
 
   loading: boolean = false;
+  clearDialogVisible = false;
+  clearMenuOpen = false;
+  sidebarWidth = 10;
+  workspaceHeight = 0;
+  resizingSidebar = false;
+  resizingWorkspace = false;
 
   audit: Audit | undefined;
   genEdAudit: Audit | undefined;
@@ -62,6 +68,8 @@ export class App implements OnInit {
   @ViewChild('timeline') timeline!: Timeline;
   @ViewChild('transferPage') transferPage!: TransferPage;
   @ViewChild('courseList') courseList!: CourseList;
+  @ViewChild('display') displayElement!: ElementRef<HTMLElement>;
+  @ViewChild('right') rightElement!: ElementRef<HTMLElement>;
 
   get subAudits(): SubAudit[]{
     let tmpArr: SubAudit[] = [];
@@ -84,12 +92,39 @@ export class App implements OnInit {
     return tmpArr;
   }
 
+  get placedCourses(): string[] {
+    const timelineCourses = this.timeline ? (this.timeline.getCourses() ?? []).flat() : [];
+    const transferCourses = this.transferPage ? this.transferPage.getCourses() : [];
+    return [...timelineCourses, ...transferCourses].filter((c): c is string => !!c);
+  }
+
+  // Satisfied requirements sort to the right so unmet ones stay up front.
+  get sortedSubAudits(): SubAudit[] {
+    const placed = this.placedCourses;
+    return [...this.subAudits].sort((a, b) => {
+      const aSatisfied = isSubAuditSatisfied(a, placed) ? 1 : 0;
+      const bSatisfied = isSubAuditSatisfied(b, placed) ? 1 : 0;
+      return aSatisfied - bSatisfied;
+    });
+  }
+
+  onSubAuditCourseClick(course: string): void {
+    this.courseList?.searchAndHighlight(course);
+    this.timeline?.highlightCourse(course);
+    this.transferPage?.highlightCourse(course);
+  }
+
   private defaultService: DefaultService;
   constructor(service: DefaultService) {
     this.defaultService = service;
   }
 
   setAudit(audit: string) {
+    if (!audit) {
+      this.audit = undefined;
+      this.updateCourseList();
+      return;
+    }
     console.log("set audit!!")
     this.defaultService.auditsAuditGet(audit).subscribe(
       (data) => {
@@ -100,6 +135,11 @@ export class App implements OnInit {
   }
 
   setGenEd(audit: string) {
+    if (!audit) {
+      this.genEdAudit = undefined;
+      this.updateCourseList();
+      return;
+    }
     this.defaultService.auditsAuditGet(audit).subscribe(
       (data) => {
         this.genEdAudit = data;
@@ -148,13 +188,13 @@ export class App implements OnInit {
   }
 
   updateCourseList() {
-    if (!this.audit?.subAudit && !this.audit?.subAudit) {
+    if (!this.audit?.subAudit && !this.genEdAudit?.subAudit) {
       this.courses = [];
     }
     else {
       this.courses = []
       if (this.audit)
-        this.audit.subAudit.flatMap(subAudit =>
+        this.audit.subAudit?.flatMap(subAudit =>
           subAudit.courses ? subAudit.courses.flatMap(course => this.parseCourses(course)) : []
         ).forEach(c => this.courses.push(c));
       if (this.genEdAudit)
@@ -197,14 +237,102 @@ export class App implements OnInit {
     this.auditSelectorIsVisible = false;
   }
 
-  clearCourseVal(): void {
-    this.timeline.reset()
+  requestClearAll(): void {
+    this.clearDialogVisible = true;
+  }
+
+  confirmClearAll(): void {
+    this.clearDialogVisible = false;
+    this.clearBoth();
+  }
+
+  clearBoth(): void {
+    this.timeline.reset();
     this.transferPage.resetVisibility();
     this.courseList.resetVisibility();
+    this.clearMenuOpen = false;
+    this.failed = false;
+  }
+
+  finishRun(): void {
+    this.loading = false;
+    this.timeline.lockTimeline(false);
+    this.timeline.setOverlay(OVERLAY_STATUS.OFF, null);
+  }
+
+  clearTimelineOnly(): void {
+    this.timeline.reset();
+    this.clearMenuOpen = false;
+    this.failed = false;
+  }
+
+  clearTransferOnly(): void {
+    this.transferPage.resetVisibility();
+    this.clearMenuOpen = false;
+  }
+
+  resizeSidebar(event: PointerEvent): void {
+    if (!this.resizingSidebar) {
+      return;
+    }
+    const display = this.displayElement?.nativeElement;
+    if (!display) {
+      return;
+    }
+    const bounds = display.getBoundingClientRect();
+    this.sidebarWidth = Math.min(35, Math.max(15, ((event.clientX - bounds.left) / bounds.width) * 100));
+  }
+
+  resizeWorkspace(event: PointerEvent): void {
+    if (!this.resizingWorkspace) {
+      return;
+    }
+    const right = this.rightElement?.nativeElement;
+    if (!right) {
+      return;
+    }
+    const bounds = right.getBoundingClientRect();
+    this.workspaceHeight = Math.min(bounds.height * 0.75, Math.max(bounds.height * 0.25, event.clientY - bounds.top));
+  }
+
+  startSidebarResize(event: PointerEvent): void {
+    this.resizingSidebar = true;
+    (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
+  }
+
+  stopSidebarResize(): void {
+    this.resizingSidebar = false;
+  }
+
+  startWorkspaceResize(event: PointerEvent): void {
+    this.resizingWorkspace = true;
+    (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
+  }
+
+  stopWorkspaceResize(): void {
+    this.resizingWorkspace = false;
+  }
+
+  @HostListener('window:pointermove', ['$event'])
+  onWindowPointerMove(event: PointerEvent): void {
+    if (this.resizingWorkspace) {
+      this.resizeWorkspace(event);
+    } else if (this.resizingSidebar) {
+      this.resizeSidebar(event);
+    }
+  }
+
+  @HostListener('window:pointerup')
+  stopResize(): void {
+    this.resizingSidebar = false;
+    this.resizingWorkspace = false;
   }
 
   runCourseVal(): void {
-    // this.loading = true;
+    if (this.loading) {
+      return;
+    }
+    this.loading = true;
     this.timeline.setOverlay(OVERLAY_STATUS.LOADING, null);
     this.failed = false
     this.timeline.lockTimeline(true);
@@ -213,15 +341,14 @@ export class App implements OnInit {
     console.log(this.transferPage)
 
     var config: RunConfig = {
-      genEdProgram: "GenEd",
+      genEdProgram: this.genEdAudit?.info?.code ?? "GenEd",
       pathway: { semesters: pathway },
       transferCourses: this.transferPage.getCourses()
     }
     if (this.audit?.info === undefined) {
       this.failed = true
-      this.loading = false
       this.errorMessage = "No audit selected"
-      this.timeline.lockTimeline(false);
+      this.finishRun();
       return
     }
     this.defaultService.auditsAuditRunPost(this.audit["info"].code, config).subscribe(
@@ -238,21 +365,18 @@ export class App implements OnInit {
                 }) : []
               })]
               this.timeline.populateTimeline(timelineRet)
-              this.timeline.lockTimeline(false);
             }
           }
           else {
             this.failed = true
             this.errorMessage = "Unsolvable audit"
-            this.timeline.lockTimeline(false);
           }
-          this.loading = false
+          this.finishRun();
         },
         error: err => {
           this.failed = true
-          this.loading = false
           this.errorMessage = err.message
-          this.timeline.lockTimeline(false);
+          this.finishRun();
           //console.log(err)
         }
       }
@@ -274,6 +398,10 @@ export class App implements OnInit {
             this.genEds.push(audit);
           }
         });
+
+        if (this.genEds.length > 0 && this.genEds[0].info?.code) {
+          this.setGenEd(this.genEds[0].info.code);
+        }
 
         // this.audits = tempAudits;
         // this.genEds = tempGenEds;

@@ -27,8 +27,31 @@ div {
     word-break: keep-all;
     white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis;
     flex-shrink: 1;
     text-align: center;
     align-content: center;
+}
+
+.course-label {
+    display: block;
+    max-width: 100%;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+:host(.glow) div {
+    animation: course-glow 1s ease-out;
+}
+
+@keyframes course-glow {
+    0% {
+        box-shadow: 0 0 0 0 var(--button-color, gold);
+        background-color: var(--button-color, gold);
+    }
+    100% {
+        box-shadow: 0 0 12px 4px transparent;
+        background-color: #5f5f5f;
+    }
 }

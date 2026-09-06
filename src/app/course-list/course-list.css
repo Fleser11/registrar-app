@@ -7,10 +7,33 @@
     display: flex;
     flex-direction: column;
     /* gap: var(--gap-size); */
-    overflow-y: auto;
+    overflow-y: scroll;
     overflow-x: hidden;
     flex: 1;
     min-height: 0;
     font-size: clamp(.5em , 1.5vw, 1em);
     white-space: nowrap;
+    padding: 8px 0;
+    box-sizing: border-box;
+    scrollbar-width: thin;
+    scrollbar-color: var(--button-color) transparent;
+}
+
+.course-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.course-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.course-list::-webkit-scrollbar-thumb {
+    background-color: var(--button-color);
+    border-radius: 4px;
+}
+
+.course-list::-webkit-scrollbar-button {
+    display: none;
+    width: 0;
+    height: 0;
 }

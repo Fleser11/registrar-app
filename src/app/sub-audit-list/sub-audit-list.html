@@ -5,3 +5,8 @@
 <p>
     {{subAudit.description}}
 </p>
+<div class="course-chips">
+    <button type="button" class="course-chip" *ngFor="let c of displayCourses"
+        [class.course-satisfied]="isCoursePlaced(c)"
+        title="Find {{displayLabel(c)}} in the course list" (click)="courseClick.emit(c)">{{displayLabel(c)}}</button>
+</div>

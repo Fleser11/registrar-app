@@ -1,9 +1,10 @@
 
 <div class="course" #courseDiv [class.disabled]="state==STATE.DISABLED" [draggable]="hasValue()"
+    [attr.title]="hoverTooltip || coursef(course) || null"
+    (mouseenter)="updateTooltip()"
     (dragover)="onDragOver($event)" (drop)="onDrop($event)" (dragstart)="onDragStart($event, course)"
     (dragend)="onDragEnd($event)">
-    {{coursef(course)}}
-
+    <span class="course-label" appShrinkToFit>{{coursef(course)}}</span>
 </div>
 <div *ngIf="state==STATE.ENABLED" class="icon-circle" (click)="disable()">
     &#10006;

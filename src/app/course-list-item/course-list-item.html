@@ -1,8 +1,9 @@
-<div 
-    class="course" 
-    draggable="true" 
+<div
+    class="course course-item"
+    draggable="true"
+    [attr.title]="hoverTooltip || coursef(course) || null"
+    (mouseenter)="updateTooltip()"
     (dragstart)="onDragStart($event, course)"
-    (dragend)="onDragEnd($event)"
-    class="course-item">
-    {{coursef(course)}}
+    (dragend)="onDragEnd($event)">
+    <span class="course-label" appShrinkToFit>{{coursef(course)}}</span>
 </div>

@@ -39,10 +39,37 @@ export class CourseList {
     this.searchTerm = searchTerm;
   }
 
+  // Used when a course is clicked elsewhere (e.g. a sub-audit chip): pulls it
+  // up in the search box and glows the matching item so it's easy to spot.
+  searchAndHighlight(course: string): void {
+    this.searchTerm = course;
+    setTimeout(() => {
+      const items = this.courseItems.filter((item: CourseListItem) => item.course === course);
+      const matches = items.length ? items : this.courseItems.filter((item: CourseListItem) => this.matchesSearch(item.course));
+      matches.forEach((item: CourseListItem) => item.triggerGlow());
+    });
+  }
+
 
   matchesSearch(course: string): boolean{
-    return course.includes(this.searchTerm);
+    return course.toLowerCase().includes(this.searchTerm.toLowerCase());
 
+  }
+
+  subjectPrefix(course: string): string {
+    const match = course.replace('abstract_', '').match(/^[A-Za-z]+/);
+    return match ? match[0].toUpperCase() : course;
+  }
+
+  get sortedCourses(): string[] {
+    return [...this.courses].sort((a, b) => {
+      const prefixA = this.subjectPrefix(a);
+      const prefixB = this.subjectPrefix(b);
+      if (prefixA !== prefixB) {
+        return prefixA.localeCompare(prefixB);
+      }
+      return a.replace('abstract_', '').localeCompare(b.replace('abstract_', ''));
+    });
   }
 
 }
